@@ -1,3 +1,4 @@
+from heapq import *
 # 최소 힙 구현
 def min_heap(scovile):
     heap = [0, scovile[0]]
@@ -173,15 +174,38 @@ def solution2(scoville, K):
                         answer += 1
                         return answer
 
+
+def solution4(scoville, K):
+    answer = 0
+    heap = []
+
+    for element in scoville:
+        heappush(heap, element)
+
+    while True:
+        if heap[0] >= K:
+            break
+
+        if len(heap) == 1:
+            return -1
+
+        minimum = heappop(heap)
+        second = heappop(heap)
+        heappush(heap, minimum + second * 2)
+        answer += 1
+
+    return answer
+
+
 print('\n' + '-' * 50 + '\n')
-print(solution3([2, 1, 3, 9, 10, 12], 7))
-print('\n' + '-' * 50 + '\n')
-print(solution3([1, 2, 9], 7))
-print('\n' + '-' * 50 + '\n')
-print(solution3([1, 1, 1, 1, 1, 1, 30], 20))
-print('\n' + '-' * 50 + '\n')
-print(solution3([1, 1, 1], 8))
-print('\n' + '-' * 50 + '\n')
-print(solution3([3, 5, 7, 23, 1, 2, 8], 35))
-print('\n' + '-' * 50 + '\n')
-print(solution3([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 2, 2, 2, 8], 70))
+print(solution4([2, 1, 3, 9, 10, 12], 7))
+# print('\n' + '-' * 50 + '\n')
+# print(solution3([1, 2, 9], 7))
+# print('\n' + '-' * 50 + '\n')
+# print(solution3([1, 1, 1, 1, 1, 1, 30], 20))
+# print('\n' + '-' * 50 + '\n')
+# print(solution3([1, 1, 1], 8))
+# print('\n' + '-' * 50 + '\n')
+# print(solution3([3, 5, 7, 23, 1, 2, 8], 35))
+# print('\n' + '-' * 50 + '\n')
+# print(solution3([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 2, 2, 2, 8], 70))
