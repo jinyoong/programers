@@ -1,12 +1,12 @@
 function solution(x, y, n) {
-  const queue = [[x, 0]];
-  const visited = new Set();
+  const queue = [x];
+  const visited = new Array(y - x + 1).fill(0);
   let idx = 0;
   let length = 1;
-  visited.add(x);
 
   while (idx < length) {
-    const [current, count] = [...queue[idx]];
+    const current = queue[idx];
+    const count = visited[current - x];
     idx += 1;
     
     if (current === y) return count;
@@ -18,11 +18,12 @@ function solution(x, y, n) {
       else if (i === 1) nextNumber = current * 2;
       else nextNumber = current + n;
 
-      if (visited.has(nextNumber)) continue;
+      if (visited[nextNumber - x] !== 0) continue;
 
       if (nextNumber > y) continue;
 
-      queue.push([nextNumber, count + 1]);
+      queue.push(nextNumber);
+      visited[nextNumber - x] = count + 1;
       length += 1
     };
   };
