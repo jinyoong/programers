@@ -13,10 +13,7 @@ function solution(x, y, n) {
 
     let nextNumber = 0;
 
-    for (let i = 0; i < 3; i++) {
-      if (i === 0) nextNumber = current * 3;
-      else if (i === 1) nextNumber = current * 2;
-      else nextNumber = current + n;
+    for (const nextNumber of [current * 3, current * 2, current + n]) {
 
       if (visited[nextNumber - x] !== 0) continue;
 
