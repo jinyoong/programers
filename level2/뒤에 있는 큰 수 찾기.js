@@ -1,22 +1,33 @@
 function solution(numbers) {
   const answer = new Array(numbers.length).fill(-1);
+  const pair = [numbers[numbers.length - 1], numbers[numbers.length - 1]]
 
-  for (let i = 0; i < numbers.length; i++) {
+  for (let i = numbers.length - 1; i >= 0; i--) {
+    const nextNumber = pair[0];
+    const big = pair[1];
     const current = numbers[i];
 
-    for (let j = i + 1; j < numbers.length; j++) {
-      const nextNumber = numbers[j];
-      let isExist = false;
+    pair[0] = current;
 
-      if (nextNumber > current) {
-        answer[i] = nextNumber;
-        isExist = true;
-        break;
+    if (current < nextNumber) {
+      answer[i] = nextNumber;
+    }
+    else if (current < big) {
+      for (let j = i + 1; j < numbers.length; j++) {
+        if (numbers[j] > current) {
+          answer[i] = numbers[j];
+          break;
+        };
       };
-
-      if (isExist) answer[i] = -1;
-    };
-  };
+    }
+    else {
+      answer[i] = -1;
+      pair[1] = current;
+    }
+  }
 
   return answer;
 }
+
+console.log(solution([2, 1, 2, 3, 4]));
+console.log(solution([9, 1, 5, 3, 6, 2]));
