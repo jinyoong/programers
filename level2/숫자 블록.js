@@ -11,14 +11,25 @@ function solution(begin, end) {
 function calculate(number) {
   if (number === 1) return 0;
 
+  let result = 1;
+
   const maximum = Math.ceil(Math.sqrt(number));
 
   for (let i = 2; i <= maximum; i++) {
-    if (parseInt(number / i) <= 10000000 && number % i === 0) return parseInt(number / i);
+    
+    if (number % i !== 0) continue;
+
+    if (parseInt(number / i) <= 10000000) {
+      result = parseInt(number / i);
+      break;
+    } else {
+      result = i;
+    };
   };
 
-  return 1;
+  return result;
 };
 
-console.log(solution(900, 920));
-console.log(solution(999999999, 1000000000))
+// console.log(solution(900, 920));
+// console.log(solution(999999990, 1000000000))
+console.log(solution(100000014, 100000016))
