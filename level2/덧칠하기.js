@@ -1,23 +1,17 @@
 function solution(n, m, section) {
   let answer = 0;
-  let isVisited = new Set();
   let idx = 0;
 
   while (idx < section.length) {
     const currentElement = section[idx];
+    const startIdx = idx;
 
-    if (isVisited.has(currentElement)) {
-      idx += 1;
-      continue;
-    };
-
-    for (let nextIdx = idx; nextIdx < section.length; nextIdx++) {
+    for (let nextIdx = startIdx; nextIdx < section.length; nextIdx++) {
       const nextElement = section[nextIdx];
       
       if (nextElement >= currentElement + m) break;
 
-      isVisited.add(nextElement);
-      idx = nextIdx;
+      idx = nextIdx + 1;
     };
 
     answer += 1;
