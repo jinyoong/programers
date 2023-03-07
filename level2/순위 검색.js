@@ -1,71 +1,74 @@
 function solution(info, query) {
-  var answer = [];
-  const sortedInfo = info.map(element => element.split(" ")).sort((a, b) => Number(a[4]) - Number(b[4]))
+  let answer = [];
+  const infoObject = {};
 
-  query.forEach(element => {
-    const targetArray = element.replaceAll("and ", "").split(" ");
-    const targetScore = Number(targetArray[4]);
-    let start = 0;
-    let end = sortedInfo.length;
-    let middle;
-    let middleScore;
+  info.forEach(infoElement => {
+    const infoArray = infoElement.split(" ");
+    const infoKey = infoArray.slice(0, 4).join(":");
+    const infoValue = Number(infoArray[4]);
     
-    while (start < end) {
-      middle = parseInt((start + end) / 2);
-      middleScore = Number(sortedInfo[middle][4]);
-
-      if (middleScore < targetScore) {
-        start = middle + 1;
-
-        if (sortedInfo[middle + 1][4] >= targetScore) {
-          middle += 1;
-          break;
-        };
-      } else {
-        end = middle - 1;
-
-        if (sortedInfo[middle - 1][4] < targetScore) {
-          break;
-        };
-      };
+    if (infoObject[infoKey]) {
+      infoObject[infoKey].push(infoValue);
+    } else {
+      infoObject[infoKey] = [infoValue];
     };
+  });
 
+  for (let infoKey in infoObject) {
+    const sortedInfoValue = infoObject[infoKey].sort((a, b) => a - b);
+    infoObject[infoKey] = sortedInfoValue;
+  };
+
+  query.forEach(queryElement => {
+    const queryArray = queryElement.replaceAll("and ", "").replaceAll("-", "").split(" ");
+    const queryKey = queryArray.slice(0, 4);
+    const queryValue = Number(queryArray[4]);
     let result = 0;
 
-    console.log(sortedInfo)
-    console.log(middle)
-
-    for (let i = middle; i < sortedInfo.length; i++) {
-      let isBreak = false;
-
-      for (let j = 0; j < 4; j++) {
-        const infoElement = sortedInfo[i][j];
-        const queryElement = targetArray[j];
-
-        console.log("지원자의 역량 : ", infoElement);
-        console.log("요구 역량 : ", queryElement);
-
-        if (queryElement === "-") {
-          continue;
-        } else {
-          if (queryElement !== infoElement) {
-            isBreak = true;
-            break;
-          };
-        };
-      };
-
-      if (!isBreak) {
-        result += 1;
+    for (let infoKey in infoObject) {
+      const infoValue = infoObject[infoKey]
+      
+      if (queryKey.every(element => infoKey.includes(element))) {
+        result += infoValue.length - search(infoValue, queryValue);
       };
     };
-
-    console.log(result);
     answer.push(result);
   });
 
   return answer;
 };
+
+function search(numbers, target) {
+  let start = 0;
+  let end = numbers.length - 1;
+  let middle;
+
+  while (start <= end) {
+    middle = parseInt((start + end) / 2);
+
+    if (numbers[middle] < target) {
+      start = middle + 1;
+
+      if (numbers[middle + 1] >= target) {
+        middle += 1;
+        break;
+      };
+    } else {
+      end = middle - 1;
+
+      if (numbers[middle - 1] < target) {
+        break;
+      };
+    };
+  };
+
+  if (numbers[middle] < target) {
+    return middle + 1;
+  };
+
+  return middle;
+};
+
 
 console.log(
   solution(
