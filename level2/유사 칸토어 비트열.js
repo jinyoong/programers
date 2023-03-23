@@ -1,35 +1,47 @@
 function solution(n, l, r) {
   let answer = r - l + 1;
-  let numberCount = [[], [2]]
+  let target = [2];
   let isBreak = false;
 
   for (let i = 2; i <= n; i++) {
-    let newCount = [];
+    let newTarget = [];
 
-    if (isBreak) {
+    if (isBreak === true) {
       break;
     };
 
-    for (let j = 0; j < 5; j++) {
-      if (newCount[newCount.lentgh - 1] >= r) {
-        isBreak = true;
-        break;
-      };
-
+    for (j = 0; j < 5; j++) {
       if (j === 2) {
-        newCount.push(...new Array(5 ** (i - 1)).fill(0).map((element, index) => 5 ** (i - 1) * 2 + index));
+        for (let k = 0; k < 5 ** (i - 1); k++) {
+          const number = 5 ** (i - 1) * j + k;
+
+          if (number >= r) {
+            isBreak = true;
+            break;
+          };
+
+          newTarget.push(number);
+        };
       } else {
-        newCount.push(...numberCount[i - 1].map(element => element + (5 ** (i - 1) * j)))
+        for (let element of target) {
+          const number = element + 5 ** (i - 1) * j;
+          
+          if (number >= r) {
+            isBreak = true;
+            break;
+          };
+
+          newTarget.push(number);
+        };
       };
     };
 
-    numberCount.push(newCount);
+    target = [...newTarget];
   };
 
-  let targetArray = numberCount[n];
-  console.log(targetArray);
+  console.log(target);
 
-  targetArray.forEach(number => {
+  target.forEach(number => {
     if (number >= l && number < r) {
       answer -= 1;
     };
@@ -51,10 +63,16 @@ A => AABAA, B => BBBBB로 변한다
 2: AABAA, 25개, 1번째 위치 + 5 * (0, 1, 3, 4) + 5 ^ (n - 1) * 2 ~ (5 ^ (n - 1)) - 1 
 3: CCDCC, 125개, 2번째 위치 + 5 * (0, 1, 3, 4) + 5 ^ (n - 1) * 2 ~ (5 ^ (n - 1)) - 1 
 4: EEFEE
+
+2
+2, 7, 10, 11, 12, 13, 14, 17, 22
+2, 7, 10, 11, 12, 13, 14, 17, 22, 27, 32, 35, 36, 37, 38, 39, 42, 47, 50, 
+
+0, 1, 3, 4
+0, 1, 3, 4, 5, 6, 8, 9, 
 `
 
 console.log(solution(2, 4, 17));
-console.log(solution(0, 0, 0));
 console.log(solution(1, 0, 4));
-console.log(solution(3, 0, 10));
-console.log(solution(20, 0, 50));
+console.log(solution(3, 70, 125));
+console.log(solution(20, 9000, 10000));
