@@ -1,78 +1,75 @@
 function solution(n, l, r) {
-  let answer = r - l + 1;
-  let target = [2];
-  let isBreak = false;
+  let answer = 0;
 
-  for (let i = 2; i <= n; i++) {
-    let newTarget = [];
-
-    if (isBreak === true) {
-      break;
-    };
-
-    for (j = 0; j < 5; j++) {
-      if (j === 2) {
-        for (let k = 0; k < 5 ** (i - 1); k++) {
-          const number = 5 ** (i - 1) * j + k;
-
-          if (number >= r) {
-            isBreak = true;
-            break;
-          };
-
-          newTarget.push(number);
-        };
-      } else {
-        for (let element of target) {
-          const number = element + 5 ** (i - 1) * j;
-          
-          if (number >= r) {
-            isBreak = true;
-            break;
-          };
-
-          newTarget.push(number);
-        };
-      };
-    };
-
-    target = [...newTarget];
-  };
-
-  console.log(target);
-
-  target.forEach(number => {
-    if (number >= l && number < r) {
-      answer -= 1;
-    };
-  });
+  answer = req(l - 1, r - 1, n - 1);
 
   return answer;
-}
+};
 
-`
-1
-11011 => 1101111011000001101111011
-00000 => 0000000000000000000000000
+function req(left, right, k) {
+  let result = 0;
 
-11011 => A로, 00000 => B로 치환하면
-A => AABAA, B => BBBBB로 변한다
+  if (k === 0) {
+    for (let i = left; i <= right; i++) {
+      if (i === 2) {
+        continue;
+      };
 
+      result += 1;
+    };
+
+    return result;
+  };
+
+  for (let i = 0; i < 5; i++) {
+    if (i === 2) {
+      continue;
+    };
+
+    const start = 5 ** k * i;
+    const end = 5 ** k * (i + 1) - 1;
+    
+    if (end < left) {
+      continue;
+    } else if (start > right) {
+      continue;
+    } else if (start >= left && end <= right) {
+      result += 4 ** k;
+    } else if (start >= left && end > right) {
+      const newLeft = 0;
+      const newRight = right - start;
+
+      result += req(newLeft, newRight, k - 1);
+    } else if (start < left && end <= right) {
+      const newLeft = left - start;
+      const newRight = end % (5 ** k);
+
+      result += req(newLeft, newRight, k - 1);
+    } else if (start < left && end > right) {
+      const newLeft = left - start;
+      const newRight = right - start;
+
+      result += req(newLeft, newRight, k - 1);
+    };
+  };
+
+  return result;
+};
+
+/*
 0: 1, 1개
 1: A, 5개, 2
 2: AABAA, 25개, 1번째 위치 + 5 * (0, 1, 3, 4) + 5 ^ (n - 1) * 2 ~ (5 ^ (n - 1)) - 1 
 3: CCDCC, 125개, 2번째 위치 + 5 * (0, 1, 3, 4) + 5 ^ (n - 1) * 2 ~ (5 ^ (n - 1)) - 1 
 4: EEFEE
 
-2
-2, 7, 10, 11, 12, 13, 14, 17, 22
-2, 7, 10, 11, 12, 13, 14, 17, 22, 27, 32, 35, 36, 37, 38, 39, 42, 47, 50, 
-
-0, 1, 3, 4
-0, 1, 3, 4, 5, 6, 8, 9, 
-`
+*/
 
 console.log(solution(2, 4, 17));
-console.log(solution(1, 0, 4));
+console.log(solution(1, 2, 4));
 console.log(solution(3, 70, 125));
-console.log(solution(20, 9000, 10000));
+console.log(solution(4, 30, 118));
+console.log(solution(3, 1, 125));
+console.log(solution(4, 27, 68));
+console.log(solution(20, 1, 5 ** 20));
+console.log(solution(20, 5 ** 10, 5 ** 20));
