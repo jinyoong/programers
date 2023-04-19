@@ -1,5 +1,5 @@
 function solution(begin, target, words) {
-  let answer = Infinity;
+  let answer;
   let startSet = new Set();
   let queue = [[begin, 0, startSet]];
   let idx = 0;
@@ -12,16 +12,12 @@ function solution(begin, target, words) {
   while (idx < queue.length) {
     const current = queue[idx][0];
     const count = queue[idx][1];
-    const visited = queue[idx][2];
+    const visited = new Set(queue[idx][2]);
     idx += 1;
 
     if (current === target) {
       answer = count;
-      continue;
-    };
-
-    if (count > answer) {
-      continue;
+      break;
     };
 
     for (let i = 0; i < words.length; i++) {
