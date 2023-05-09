@@ -1,19 +1,19 @@
 function solution(n, s) {
   let answer = [];
-  let number = s;
 
   if (n > s) {
     answer.push(-1);
     return answer;
   };
 
-  for (let i = 0; i < n; i++) {
-    const count = n - i;
-    const target = parseInt(number / count);
+  const target = parseInt(s / n);
+  const remain = s % n;
 
-    answer.push(target);
-    number -= target;
-  };
+  answer = new Array(n).fill(target);
+
+  for (let i = n - remain; i < n; i++) {
+    answer[i] += 1;
+  }
 
   return answer;
 }
