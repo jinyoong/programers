@@ -1,10 +1,18 @@
 function solution(stones, k) {
-  let answer = 0;
+  let answer = 200000000;
   let section = new Heap();
 
   for (let i = 0; i < stones.length; i++) {
     const stone = stones[i];
-    section.heapPush(stone);
+    section.heapPush(stone, i);
+
+    if (i >= k - 1) {
+      while (section.heap[1][1] <= i - k) {
+        section.heapPop();
+      };
+
+      answer = Math.min(answer, section.heap[1][0]);
+    };
   };
 
   return answer;
@@ -12,23 +20,26 @@ function solution(stones, k) {
 
 class Heap {
   constructor() {
-    this.heap = [0];
+    this.heap = [[0, -1]];
   };
 
-  heapPush(x) {
-    this.heap.push(x);
+  heapPush(x, idx) {
+    this.heap.push([x, idx]);
     let childIdx = this.heap.length - 1;
-    let childNum = this.heap[childIdx];
+    let childValue = this.heap[childIdx][0];
+    let childValueIdx = this.heap[childIdx][1];
 
     while(childIdx > 1) {
       const parentIdx = parseInt(childIdx / 2);
-      const parentNum = this.heap[parentIdx];
+      const parentValue = this.heap[parentIdx][0];
+      const parentValueIdx = this.heap[parentIdx][1];
 
-      if (parentNum < childNum) {
-        this.heap[childIdx] = parentNum;
-        this.heap[parentIdx] = childNum;
+      if (parentValue < childValue) {
+        this.heap[childIdx] = [parentValue, parentValueIdx];
+        this.heap[parentIdx] = [childValue, childValueIdx];
         childIdx = parentIdx;
-        childNum = parentNum;
+        childValue = parentValue;
+        childValueIdx = parentValueIdx;
       } else {
         break;
       };
@@ -36,38 +47,42 @@ class Heap {
   };
 
   heapPop() {
-    const result = this.heap[1];
     let lastIdx = this.heap.length - 1;
     let parentIdx = 1;
 
-    this.heap[1] = this.heap[lastIdx];
+    this.heap[1] = [...this.heap[lastIdx]];
     this.heap.pop();
     lastIdx -= 1;
 
     while(parentIdx * 2 <= lastIdx) {
-      const parent = this.heap[parentIdx];
+      const parentValue = this.heap[parentIdx][0];
+      const parentValueIdx = this.heap[parentIdx][1];
+
       let childIdx = parentIdx * 2;
-      let child = this.heap[childIdx];
+      let childValue = this.heap[childIdx][0];
+      let childValueIdx = this.heap[childIdx][1];
       
       if (2 * parentIdx + 1 <= lastIdx) {
         const rightChild = this.heap[2 * parentIdx + 1];
 
-        if (child < rightChild) {
-          child = rightChild;
+        if (childValue < rightChild[0]) {
+          childValue = rightChild[0];
+          childValueIdx = rightChild[1];
           childIdx += 1;
         };
       };
 
-      if (parent < child) {
-        this.heap[parentIdx] = child;
-        this.heap[childIdx] = parent;
+      if (parentValue < childValue) {
+        this.heap[parentIdx] = [childValue, childValueIdx];
+        this.heap[childIdx] = [parentValue, parentValueIdx];
         parentIdx = childIdx;
+      } else {
+        break;
       };
     };
-
-    return result
   };
 };
 
 console.log(solution([2, 4, 5, 3, 2, 1, 4, 2, 5, 1], 3));
+console.log(solution([200, 100, 1, 50], 2));
 console.log(solution([3, 1, 2, 1], 3));
