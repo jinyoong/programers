@@ -2,8 +2,8 @@ function solution(operations) {
   let answer = [];
   let maxHeap = new Heap();
   let minHeap = new Heap();
-  let needPopMaxHeap = new Object();
-  let needPopMinHeap = new Object();
+  let needPopMax = new Map();
+  let needPopMin = new Map();
 
   operations.forEach(operation => {
     const [order, number] = seperate(operation);
@@ -15,66 +15,29 @@ function solution(operations) {
     };
 
     if (number === 1) {
-      while (
-        needPopMaxHeap.hasOwnProperty(String(maxHeap.heap[1])) &&
-        needPopMaxHeap[String(maxHeap.heap[1])] !== 0
-      ) {
-        needPopMaxHeap[String(maxHeap.heap[1])] -= 1;
-        maxHeap.heapPop();
-      };
+      popFromHeap(maxHeap, needPopMax);
 
       const popResult = maxHeap.heapPop();
 
-      if (popResult === null) {
-        return;
-      };
-
-      const target = String(-popResult);
-
-      needPopMinHeap[target] = (needPopMinHeap.hasOwnProperty(target) ? needPopMinHeap[target] : 0) + 1;
+      addToMap(-popResult, needPopMin)
     } else {
-      while (
-        needPopMinHeap.hasOwnProperty(String(minHeap.heap[1])) &&
-        needPopMinHeap[String(minHeap.heap[1])] !== 0
-      ) {
-        needPopMinHeap[String(minHeap.heap[1])] -= 1;
-        minHeap.heapPop();
-      };
+      popFromHeap(minHeap, needPopMin);
 
       const popResult = minHeap.heapPop();
 
-      if (popResult === null) {
-        return;
-      };
-
-      const target = String(-popResult);
-
-      needPopMaxHeap[target] = (needPopMaxHeap.hasOwnProperty(target) ? needPopMaxHeap[target] : 0) + 1;
+      addToMap(-popResult, needPopMax);
     };
 
   });
   
-  while (
-    needPopMaxHeap.hasOwnProperty(String(maxHeap.heap[1])) &&
-    needPopMaxHeap[String(maxHeap.heap[1])] !== 0
-  ) {
-    needPopMaxHeap[String(maxHeap.heap[1])] -= 1;
-    maxHeap.heapPop();
-  };
-
-  while (
-    needPopMinHeap.hasOwnProperty(String(minHeap.heap[1])) &&
-    needPopMinHeap[String(minHeap.heap[1])] !== 0
-  ) {
-    needPopMinHeap[String(minHeap.heap[1])] -= 1;
-    minHeap.heapPop();
-  };
+  popFromHeap(maxHeap, needPopMax);
+  popFromHeap(minHeap, needPopMin);
 
   const maxValue = maxHeap.heapPop();
   const minValue = minHeap.heapPop();
 
-  answer[0] = maxValue !== null ? maxValue : 0;
-  answer[1] = minValue !== null ? -minValue : 0; 
+  answer[0] = maxValue || 0;
+  answer[1] = -minValue || 0; 
 
   return answer;
 };
@@ -85,6 +48,27 @@ function seperate(operation) {
   const number = Number(operationArray[1]);
 
   return [order, number];
+};
+
+function popFromHeap(targetHeap, needPopMap) {
+  const target = targetHeap.heap[1];
+
+  while (needPopMap.has(target) && needPopMap.get(target) > 0) {
+    needPopMap.set(target, needPopMap.get(target) - 1);
+    targetHeap.heapPop();
+  };
+};
+
+function addToMap(target, needPopMap) {
+  if (target === null) {
+    return;
+  };
+
+  if (!needPopMap.has(target)) {
+    needPopMap.set(target, 1);
+  } else {
+    needPopMap.set(target, needPopMap.get(target) + 1);
+  };
 };
 
 class Heap {
