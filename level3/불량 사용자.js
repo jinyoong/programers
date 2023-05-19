@@ -1,72 +1,111 @@
 function solution(userId, bannedId) {
   let answer = 0;
-  let trie = new Trie();
+  let trie = new Trie(false);
+  let words = [];
 
   userId.forEach(user => {
+    let target = trie.node;
+
     for (let i = 0; i < user.length; i++) {
-      const word = user[i];
-      const next = (i + 1) < user.length ? user[i + 1] : null;
+      const current = user[i];
       const isEnd = i === user.length - 1 ? true : false;
 
-      if (trie.checkInTrie(word)) {
-        const target = trie.getNodes(word);
-        trie.addNode(target, next);
-      } else {
-        trie.makeNode(word, isEnd);
-      }
-
+      if (trie.checkNodeNotInTarget(target, current)) {
+        trie.addNode(target, current, isEnd);
+      } 
+      
+      target = trie.getNextTarget(target, current);
     }
   })
 
   bannedId.forEach(banned => {
-    for (let i = 0; i < banned.length; i++) {
-      const word = banned[i];
+    let result = [];
 
-      if (i === 0) {
-        
-      } else if (i === banned.length - 1) {
-        
-      } else {
-
-      }
-    }
+    checkWord(banned, 0, trie.node, "", result);
+    words.push(result);
   })
-  
-  console.log(trie.object);
 
+  let possibleSet = new Set();
+  let subSet = new Set();
+
+  calculateAnswer(words, 0, subSet, possibleSet);
+
+  answer = possibleSet.size;
+  
   return answer;
 }
 
-class Trie {
-  constructor() {
-    this.object = new Object();
-  }
+function checkWord(word, idx, subTarget, user, subResult) {
+  const current = word[idx];
 
-  makeNode(head, isEnd) {
-    this.object[head] = [isEnd];
-  }
-
-  checkInTrie(head) {
-    if (this.object.hasOwnProperty(head)) {
-      return true;
-    } else {
-      return false;
-    };
-  }
-
-  getNodes(head) {
-    let nodes = this.object[head];
-    return nodes;
-  }
-
-  addNode(nodes, next) {
-    if (next && !nodes.includes(next)) {
-      nodes.push(next);
+  if (idx === word.length) {
+    if (subTarget["isEnd"] === true) {
+      subResult.push(user);
     }
+
+    return;
+  }
+
+  if (current === "*") {
+    const keys = Object.keys(subTarget);
+    
+    keys.forEach(key => {
+      if (key !== "isEnd") {
+        checkWord(word, idx + 1, subTarget[key], user + key, subResult);
+      }
+    })
+  } else {
+    if (subTarget.hasOwnProperty(current)) {
+      checkWord(word, idx + 1, subTarget[current], user + current, subResult);
+    }
+  }
+}
+
+function calculateAnswer(possibleWords, idx, result, targetSet) { 
+
+  if (idx === possibleWords.length) {
+    targetSet.add([...result].sort().join(""));
+    return;
+  }
+
+  possibleWords[idx].forEach((possibleWord) => {
+    if (result.has(possibleWord)) {
+      return;
+    }
+
+    let newResult = new Set([...result]);
+    newResult.add(possibleWord);
+
+    calculateAnswer(possibleWords, idx + 1, newResult, targetSet);
+  })
+}
+
+class Trie {
+  constructor(isEnd) {
+    this.node = { 
+      isEnd
+    }
+  }
+
+  addNode(target, current, isEnd) {
+    const newNode = new Trie(isEnd);
+    target[current] = newNode.node
+  }
+
+  checkNodeNotInTarget(target, current) {
+    if (target.hasOwnProperty(current)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  getNextTarget(target, current) {
+    return target[current];
   }
 }
 
 
 console.log(solution(["frodo", "fradi", "crodo", "abc123", "frodoc"], ["fr*d*", "abc1**"]));
-// console.log(solution(["frodo", "fradi", "crodo", "abc123", "frodoc"], ["*rodo", "*rodo", "******"]));
-// console.log(solution(["frodo", "fradi", "crodo", "abc123", "frodoc"], ["fr*d*", "*rodo", "******", "******"]));
+console.log(solution(["frodo", "fradi", "crodo", "abc123", "frodoc"], ["*rodo", "*rodo", "******"]));
+console.log(solution(["frodo", "fradi", "crodo", "abc123", "frodoc"], ["fr*d*", "*rodo", "******", "******"]));
