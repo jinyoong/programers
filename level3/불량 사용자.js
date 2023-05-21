@@ -1,108 +1,52 @@
 function solution(userId, bannedId) {
-  let answer = 0;
-  let trie = new Trie(false);
-  let words = [];
+  let answer = new Set();
+  let visited = new Array(userId.length).fill(false);
 
-  userId.forEach(user => {
-    let target = trie.node;
-
-    for (let i = 0; i < user.length; i++) {
-      const current = user[i];
-      const isEnd = i === user.length - 1 ? true : false;
-
-      if (trie.checkNodeNotInTarget(target, current)) {
-        trie.addNode(target, current, isEnd);
-      } 
-      
-      target = trie.getNextTarget(target, current);
-    }
-  })
-
-  bannedId.forEach(banned => {
-    let result = [];
-
-    checkWord(banned, 0, trie.node, "", result);
-    words.push(result);
-  })
-
-  let possibleSet = new Set();
-  let subSet = new Set();
-
-  calculateAnswer(words, 0, subSet, possibleSet);
-
-  answer = possibleSet.size;
+  function req(bannedIdx, result) {
   
-  return answer;
-}
-
-function checkWord(word, idx, subTarget, user, subResult) {
-  const current = word[idx];
-
-  if (idx === word.length) {
-    if (subTarget["isEnd"] === true) {
-      subResult.push(user);
-    }
-
-    return;
-  }
-
-  if (current === "*") {
-    const keys = Object.keys(subTarget);
-    
-    keys.forEach(key => {
-      if (key !== "isEnd") {
-        checkWord(word, idx + 1, subTarget[key], user + key, subResult);
-      }
-    })
-  } else {
-    if (subTarget.hasOwnProperty(current)) {
-      checkWord(word, idx + 1, subTarget[current], user + current, subResult);
-    }
-  }
-}
-
-function calculateAnswer(possibleWords, idx, result, targetSet) { 
-
-  if (idx === possibleWords.length) {
-    targetSet.add([...result].sort().join(""));
-    return;
-  }
-
-  possibleWords[idx].forEach((possibleWord) => {
-    if (result.has(possibleWord)) {
+    if (bannedIdx === bannedId.length) {
+      answer.add(result.sort().join(""));
       return;
     }
 
-    let newResult = new Set([...result]);
-    newResult.add(possibleWord);
+    const banned = bannedId[bannedIdx];
+  
+    for (let i = 0; i < userId.length; i++) {
+      const user = userId[i];
 
-    calculateAnswer(possibleWords, idx + 1, newResult, targetSet);
-  })
+      if (!visited[i] && isMatchUserAndBanned(user, banned)) {
+        visited[i] = true;
+        req(bannedIdx + 1, [...result, user]);
+        visited[i] = false;
+      }
+    }
+  }
+
+  req(0, "");
+
+  return answer.size;
 }
 
-class Trie {
-  constructor(isEnd) {
-    this.node = { 
-      isEnd
+
+function isMatchUserAndBanned(user, banned) {
+  let result = true;
+
+  if (user.length !== banned.length) {
+    result = false;
+    return result;
+  }
+
+  for (let i = 0; i < user.length; i++) {
+    const bannedElement = banned[i];
+    const userElement = user[i];
+
+    if (!(bannedElement === "*" || bannedElement === userElement)) {
+      result = false;
+      break;
     }
   }
 
-  addNode(target, current, isEnd) {
-    const newNode = new Trie(isEnd);
-    target[current] = newNode.node
-  }
-
-  checkNodeNotInTarget(target, current) {
-    if (target.hasOwnProperty(current)) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  getNextTarget(target, current) {
-    return target[current];
-  }
+  return result;
 }
 
 
