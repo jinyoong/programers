@@ -1,65 +1,50 @@
 function solution(jobs) {
   let answer = 0;
+  let endTime = -1;
   let currentTime = 0;
+  let count = 0;
   let minHeap = new MinHeap();
-  let pushArray = [];
+
+  // while (count < jobs.length) {
+
+  //   for (let job of jobs) {
+  //     const start = job[0];
+  //     const time = job[1];
+
+  //     if (endTime < start && start <= currentTime) {
+  //       minHeap.heapPush([time, start]);
+  //     }
+  //   }
+
+  //   if (minHeap.size() === 0) {
+  //     currentTime += 1;
+  //   } else {
+  //     const target = minHeap.heapPop();
+  //     const targetTime = target[0];
+  //     const targetStart = target[1];
+  //     console.log("타겟 : ", target)
+  //     console.log(minHeap);
+      
+  //     currentTime += targetTime;
+  //     answer += currentTime - targetStart;
+  //     endTime = targetStart;
+  //     count += 1;
+  //   }
+  // }
 
   for (let job of jobs) {
-    const need = job[1];
-    const start = job[0];
-    minHeap.heapPush([need, start]);
+    minHeap.heapPush([job[1], job[0]])
   }
 
-  while (minHeap.size() > 0) {
-    const [time, start] = minHeap.heapPop();
-    let target = [time, start];
+  console.log(minHeap.heap);
 
-    while (minHeap.size() > 0) {
-      const [otherTime, otherStart] = minHeap.heapPop();
-      const expectEndTime = calulateEndTime(currentTime, otherTime, otherStart);
-
-      if (start >= expectEndTime) {
-        minHeap.heapPush(target);
-        target = [otherTime, otherStart];
-        break;
-      }
-
-      pushArray.push([otherTime, otherStart]);
-    }
-
-    while (pushArray.length > 0) {
-      minHeap.heapPush(pushArray.pop())
-    }
-
-    answer += totalTime(currentTime, target[0], target[1]);
-    currentTime = calulateEndTime(currentTime, target[0], target[1]);
+  for (let i = 0; i < jobs.length + 1; i++) {
+    minHeap.heapPop();
+    console.log(minHeap.heap);
   }
 
+  console.log(answer);
   return parseInt(answer / jobs.length);
-}
-
-function calulateEndTime(currentTime, time, start) {
-  let result = 0;
-
-  if (currentTime <= start) {
-    result = start + time;
-  } else {
-    result = currentTime + time;
-  }
-
-  return result;
-}
-
-function totalTime(currentTime, time, start) {
-  let result = 0;
-
-  if (currentTime <= start) {
-    result = time;
-  } else {
-    result = time + currentTime - start;
-  }
-
-  return result;
 }
 
 class MinHeap {
@@ -70,15 +55,15 @@ class MinHeap {
   heapPush([x, start]) {
     this.heap.push([x, start]);
     let childIdx = this.heap.length - 1;
-    let child = this.heap[childIdx];
     
     while (childIdx >= 1) {
-      let parentIdx = parseInt(childIdx / 2);
-      let parent = this.heap[parentIdx];
+      const parentIdx = parseInt(childIdx / 2);
+      const parent = this.heap[parentIdx];
+      const child = this.heap[childIdx];
 
       if (parent[0] > child[0]) {
-        this.heap[parentIdx] = child;
-        this.heap[childIdx] = parent;
+        this.heap[parentIdx] = [...child];
+        this.heap[childIdx] = [...parent];
 
         childIdx = parentIdx;
       } else {
@@ -88,37 +73,36 @@ class MinHeap {
   }
 
   heapPop() {
-    const heapLength = this.heap.length;
-
-    if (heapLength === 0) {
+    if (this.size() === 0) {
       return null
     }
 
-    let result = this.heap[0];
-    this.heap[0] = this.heap[heapLength - 1];
-    this.heap.pop();
-    let lastIdx = heapLength - 2;
+    let result = [...this.heap[0]];
+    let lastIdx = this.size() - 2;
     let parentIdx = 0;
-    let parent = this.heap[parentIdx];
     let childIdx = 2 * parentIdx + 1;
-    let child = this.heap[childIdx];
+    this.heap[0] = [...this.heap[lastIdx + 1]];
+    this.heap.pop();
 
     while (childIdx <= lastIdx) {
+      let child = [...this.heap[childIdx]];
       if (childIdx + 1 <= lastIdx) {
-        const rightChild = this.heap[childIdx + 1];
+        const rightChild = [...this.heap[childIdx + 1]];
 
         if (child[0] > rightChild[0]) {
-          child = rightChild;
+          child = [...rightChild];
           childIdx += 1;
         }
       }
 
+      let parent = [...this.heap[parentIdx]];
+
       if (parent[0] > child[0]) {
-        this.heap[parentIdx] = child;
-        this.heap[childIdx] = parent;
+        this.heap[parentIdx] = [...child];
+        this.heap[childIdx] = [...parent];
 
         parentIdx = childIdx
-        childIdx = 2 * parentIdx;
+        childIdx = 2 * parentIdx + 1;
       } else {
         break;
       }
@@ -132,8 +116,11 @@ class MinHeap {
   }
 }
 
-console.log(solution([[0, 3], [1, 9], [2, 6]]));
-console.log(solution([[0, 3], [10, 1]])); // 2
-console.log(solution([[7, 8], [3, 5], [9, 6]])); // 9
-console.log(solution([[1, 4], [7, 9], [1000, 3]])); // 5
-console.log(solution([[0, 1], [2, 2], [2, 3]])) // 2
+// console.log(solution([[0, 3], [1, 9], [2, 6]]));
+// console.log(solution([[0, 3], [10, 1]])); // 2
+// console.log(solution([[7, 8], [3, 5], [9, 6]])); // 9
+// console.log(solution([[1, 4], [7, 9], [1000, 3]])); // 5
+// console.log(solution([[0, 1], [2, 2], [2, 3]])) // 2
+// console.log(solution([[0, 3], [4, 4], [5, 3], [4, 1]]))
+console.log(solution([[0,16],[0,14],[15,1],[13,13]]));
+console.log(solution([[0, 6], [2, 8], [3, 7], [7, 1], [11, 11], [19, 25], [30, 15], [32, 6], [40, 3]]));
