@@ -24,6 +24,13 @@ function solution(grid) {
   return answer;
 }
 
+function calculateLocation(r, c, width, height) {
+  const nr = (r + height) % height;
+  const nc = (c + width) % width;
+
+  return [nr, nc];
+}
+
 function findPossibleDirection(point) {
   let result = [];
 
