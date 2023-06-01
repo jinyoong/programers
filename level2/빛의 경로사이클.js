@@ -5,56 +5,66 @@ function solution(grid) {
   let visited = new Array(height).fill(0).map(() => new Array(width).fill(0));
   let directions = [[0, -1], [-1, 0], [0, 1], [1, 0]];
   let match = {'S': 0, 'R': 3, 'L': 1};
-  // visited[i][j] : i행, j열로 들어온 빛의 이전 방향을 저장. 1 : 왼쪽, 3 : 아래쪽, 5 : 오른쪽, 7 : 위쪽
-  // 즉, visited[i][j] = 10 이면 가능한 건 왼쪽(1) 과 오른쪽(5) 이게 된다.
-
+  // visited[i][j] : i행, j열로 들어온 빛의 이전 방향을 저장.
+  // 10^0 : 왼쪽, 10^1 : 위쪽, 10^2 : 오른쪽, 10^3 : 아래쪽
+  // vistied[1][1] = 1010 : 1행 1열에는 빛이 아래쪽, 위쪽 두 방향에서 왔었다.
+  
   for (let r = 0; r < height; r++) {
     for (let c = 0; c < width; c++) {
-      const possibleDirection = findPossibleDirection(visited[r][c]);
-
-      for (let element of possibleDirection) {
-
+      for (let p = 0; p < 4; p++) {
+        if (numberOfPlace(visited[r][c], p) === 0) {
+          let result = cycle(r, c, p, 0);
+          answer.push(result);
+        }
       }
     }
   }
 
-  function cycle(sr, sc, direction) {
+  function cycle(sr, sc, sd, result) {
+    let d = sd;
+    let r = sr;
+    let c = sc;
+
+    do {
+      if (numberOfPlace(visited[r][c], d) === 0) {
+        visited[r][c] += 10 ** d;
+      }
+
+      const gridElement = grid[r][c];
+      const direction = directions[(d + match[gridElement]) % 4];
+      d = (d + match[gridElement]) % 4;
+      r = calculateLocation(r + direction[0], height);
+      c = calculateLocation(c + direction[1], width);
+
+      result += 1;
+    } while (!(r === sr && c === sc && d === sd));
+
+    return result;
   }
 
-  return answer;
+  return answer.sort((a, b) => a - b);
 }
 
-function calculateLocation(r, c, width, height) {
-  const nr = (r + height) % height;
-  const nc = (c + width) % width;
+function calculateLocation(input, limit) {
+  const result = (input + limit) % limit;
 
-  return [nr, nc];
+  return result;
 }
 
-function findPossibleDirection(point) {
-  let result = [];
-
-  function req(num, sum, subResult) {
-    if (sum > 16) {
-      return;
-    }
-
-    if (sum === 16) {
-      result = [...subResult];
-      return;
-    }
-
-    for (let i = num; i <= 7; i += 2) {
-      
-      req(num + 2, sum + num, [...subResult, num]);
-    }
+function numberOfPlace(number, d) {
+  let result = 0;
+  
+  if (d === 0) {
+    result = number % 10;  
+  } else {
+    result = parseInt((number / (10 ** d)) % 10);
   }
 
-  req(1, point, []);
-
-  return new Set(result);
+  return result;
 }
 
-console.log(solution(["SL","LR"]));
-console.log(solution(["S"]));
-console.log(solution(["R","R"]));
+// console.log(solution(["SL","LR"]));
+// console.log(solution(["S"]));
+// console.log(solution(["R","R"]));
+// console.log(solution(["RR", "RR"]));
+console.log(solution(['S', 'S']))
