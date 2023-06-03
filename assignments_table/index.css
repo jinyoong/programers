@@ -19,6 +19,6 @@ tr:nth-child(2n) {
   column-gap: 10px;
 }
 
-.current {
+.active {
   color: red;
 }
