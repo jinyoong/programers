@@ -15,7 +15,7 @@ class App {
         const tableData = await response.json();
         console.log("불러온 데이터 : ", tableData);
         new Table(tableData, 0, 4);
-        new Pagination(1, 5);
+        new Pagination(tableData, 1, 4);
       };
     } catch (error) {
       console.log(error)
