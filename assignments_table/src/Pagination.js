@@ -69,8 +69,22 @@ class Pagination {
     }
   }
 
+  buttonToNumber(clickNumber) {
+    let result = 1;
+
+    if (clickNumber === '<<') {
+      result = 1;
+    } else if (clickNumber === '>>') {
+      result = Math.ceil(this.total / this.per);
+    } else {
+      result = Number(clickNumber);
+    }
+
+    return result;
+  }
+
   clickEvent(event) {
-    const clickPage = Number(event.target.innerText);
+    const clickPage = this.buttonToNumber(event.target.innerText);
     const start = this.per * (clickPage - 1);
     const end = this.per * clickPage;
     this.currentPage = clickPage;
