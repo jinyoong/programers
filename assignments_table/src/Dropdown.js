@@ -1,4 +1,4 @@
-import Table from "./Table.js";
+import Pagination from "./Pagination.js";
 
 class Dropdown {
   constructor(datas, options) {
@@ -26,7 +26,9 @@ class Dropdown {
 
   changeEvent(event) {
     const per = Number(event.target.value);
-    new Table(this.datas, 0, per).makeBody();
+    const paginationArea = document.getElementsByClassName('paginationArea')[0];
+    paginationArea.remove();
+    new Pagination(this.datas, 1, per);
   }
 
   render() {
