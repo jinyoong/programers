@@ -1,56 +1,57 @@
 class Table {
-  constructor(data, start, count) {
-    this.data = data;
-    this.start = start;
-    this.count = count;
+  constructor(datas) {
+    this.datas = datas;
     this.render();
   };
 
-  makeHead(tableArea) {
+  drawTableHead() {
     const tableHead = document.createElement('thead');
-    tableHead.className = "thead";
-  
-    const tableHeadLine = document.createElement("tr");
-    const tableHeadElements = ["이름", "소속팀", "등번호", "포지션"];
+    const tableHeadTr = document.createElement('tr');
+    const tableHeadItems = ['이름', '팀', '등번호', '포지션'];
     
-    tableHeadElements.forEach(element => {
-      const tableHeadElement = document.createElement("th");
-      tableHeadElement.textContent = element;
-  
-      tableHeadLine.appendChild(tableHeadElement);
-    });
-  
-    tableHead.appendChild(tableHeadLine);
-    tableArea.appendChild(tableHead);
-  };
+    tableHeadItems.forEach(tableHeadItem => {
+      const th = document.createElement('th');
+      th.textContent = tableHeadItem;
 
-  makeBody(tableArea) {
-    const tableBody = document.createElement("tbody");
-    tableBody.className = "tbody";
+      tableHeadTr.appendChild(th);
+    })
 
-    for (let i = 0; i < this.count; i++) {
-      const idx = this.start + i;
-      const tableBodyLine = document.createElement("tr");
+    tableHead.appendChild(tableHeadTr);
+    return tableHead;
+  }
 
-      tableBodyLine.innerHTML = `
-        <td>${this.data[idx].name}</td>
-        <td>${this.data[idx].team}</td>
-        <td>${this.data[idx].number}</td>
-        <td>${this.data[idx].position}</td>
-      `;
+  drawTableBody() {
+    const tableBody = document.createElement('tbody');
+    
+    for (let i = 0; i < this.datas.length; i++) {
+      const tableBodyTr = document.createElement('tr');
+      const data = this.datas[i];
 
-      tableBody.appendChild(tableBodyLine);
-    };
+      tableBodyTr.innerHTML = `
+        <td>${data.name}</td>
+        <td>${data.team}</td>
+        <td>${data.number}</td>
+        <td>${data.position}</td>
+      `
 
-    tableArea.appendChild(tableBody);
-  };
+      tableBody.appendChild(tableBodyTr);
+    }
+
+    return tableBody;
+  }
 
   render() {
-    const tableArea = document.getElementById('table');
-    tableArea.className = "table";
-    
-    this.makeHead(tableArea);
-    this.makeBody(tableArea);
+    const table = document.createElement('table');
+    table.classList = ['table'];
+
+    const thead = this.drawTableHead();
+    table.appendChild(thead);
+
+    const tbody = this.drawTableBody();
+    table.appendChild(tbody);
+
+    document.getElementById('tableArea').appendChild(table);
+
   };
 };
 
