@@ -16,7 +16,7 @@ class App {
         const options = [4, 8];
         console.log("불러온 데이터 : ", tableData);
         new Table(tableData);
-        new Pagination(tableData);
+        new Pagination(tableData, 5, 4, 1);
       };
     } catch (error) {
       console.log(error)
