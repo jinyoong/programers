@@ -27,16 +27,33 @@ class Pagination {
     for (let page = 0; page <= maxPageCount + 1; page++) {
       const button = document.createElement('button');
       button.textContent = this.pageContent(maxPageCount, page);
-      button.classList = ['pageButton'];
 
-      if (page === currentPage) {
-        button.classList.add('active');
-      }
-
+      button.addEventListener('click', (event) => {
+        this.clickEvent(event, maxPageCount);
+      })
+      
       pagination.appendChild(button);
     }
 
     return pagination;
+  }
+
+  setPaginationButtonsStyle(maxPageCount, currentPage) {
+    const buttons = document.getElementsByTagName('button');
+    
+    for (let page = 1; page <= maxPageCount; page++) {
+      const button = buttons[page];
+      button.classList = ['pagination'];
+
+      if (page === currentPage) {
+        button.classList.add('active');
+      }
+    }
+  }
+
+  clickEvent(event, maxPageCount) {
+    const clickedButton = Number(event.target.textContent);
+    this.setPaginationButtonsStyle(maxPageCount, clickedButton)
   }
 
   render() {
@@ -44,8 +61,9 @@ class Pagination {
     let datasOfPage = 4;
     let currentPage = 1;
     const pagination = this.drawPaginationButtons(maxPageCount, datasOfPage, currentPage);
-
+    
     document.getElementById('paginationArea').appendChild(pagination);
+    this.setPaginationButtonsStyle(maxPageCount, currentPage);
   }
 }
 
