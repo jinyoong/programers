@@ -44,7 +44,7 @@ class Pagination {
 
   drawTableByNewData() {
     const start = (this.currentPage - 1) * this.datasOfPage;
-    const end = this.currentPage * this.datasOfPage;
+    const end = Math.min(this.datas.length, this.currentPage * this.datasOfPage);
     const tableBody = document.getElementsByTagName('tbody')[0];
     tableBody.innerHTML = '';
 

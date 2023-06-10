@@ -1,5 +1,6 @@
 import Table from "./Table.js";
 import Pagination from "./Pagination.js";
+import Dropdown from "./Dropdown.js";
 
 class App {
   constructor($app) {
@@ -17,6 +18,7 @@ class App {
         console.log("불러온 데이터 : ", tableData);
         new Table(tableData);
         new Pagination(tableData, 5, 4, 1);
+        new Dropdown(tableData, options);
       };
     } catch (error) {
       console.log(error)

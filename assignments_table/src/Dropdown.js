@@ -26,16 +26,15 @@ class Dropdown {
 
   changeEvent(event) {
     const per = Number(event.target.value);
-    const paginationArea = document.getElementsByClassName('paginationArea')[0];
-    paginationArea.remove();
-    new Pagination(this.datas, 1, per);
+    const maxPageCount = Math.ceil(this.datas.length / per); 
+    const paginationArea = document.getElementById('paginationArea');
+    paginationArea.innerHTML = '';
+    new Pagination(this.datas, maxPageCount, per, 1);
   }
 
   render() {
-    const app = document.getElementById('app');
-
-    const dropdownArea = this.setDropdown();
-    app.appendChild(dropdownArea);
+    const dropdown = this.setDropdown();
+    document.getElementById('dropdownArea').appendChild(dropdown);
   }
 }
 
