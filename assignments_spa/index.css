@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* GNB */
+header {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  font-size: 1.5em;
+  font-family: 'Bebas Neue', cursive;
+  background: #29323C;
+  background: linear-gradient(198deg, rgba(2,0,36,1) 0%, rgba(99,116,136,1) 0%, rgba(41,50,60,1) 100%);
+  color: white;
+}
+
+.header {
+  padding: 0px 20px;
+}
+
+#page_content {
+  padding: 20px;
+}
+
+.content_title {
+  text-align: center;
+}
