@@ -17,6 +17,19 @@ header {
 
 .header {
   padding: 0px 20px;
+  position: absolute;
+}
+
+.header_left {
+  left: 15px;
+}
+
+.header_right {
+  right: 15px;
+}
+
+.menu_name:hover {
+  cursor: pointer;
 }
 
 #page_content {
