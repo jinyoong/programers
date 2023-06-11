@@ -1,4 +1,5 @@
-import Header from "./Header.js";
+import Header from './Header.js';
+import Home from './Home.js';
 
 class App {
   constructor($body) {
@@ -9,6 +10,9 @@ class App {
   render() {
     const header = new Header(this.$body);
     header.render();
+
+    const home = new Home(this.$body);
+    home.render();
   }
 }
 
